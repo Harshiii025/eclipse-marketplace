@@ -1,0 +1,34 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# PHP / local development
+vendor/
+
+# Local uploads
+public/uploads/*
+storage/uploads/*
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Database dumps / local database files
+*.sql.gz
+*.sqlite
+*.sqlite3
