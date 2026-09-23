@@ -1,0 +1,24 @@
+:root {
+    /* Colors */
+    --color-bg-base: #F7F6F2;
+    --color-surface: #EAE7E0;
+    --color-text-main: #1A1C23;
+    --color-text-muted: #6E6B66;
+    --color-border: #D8D4CC;
+    --color-accent: #1A1C23;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+
+    /* Layout */
+    --container-width: 1280px;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 32px;
+    --space-xl: 64px;
+    --space-2xl: 96px;
+}
