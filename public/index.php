@@ -14,7 +14,9 @@
 
 <body>
 
-   <?php include __DIR__ . '/partials/navbar.php'; ?>
+   <?php include __DIR__ . '/partials/navbar.php'; 
+   session_start();
+   ?>
 
 <main>
 
