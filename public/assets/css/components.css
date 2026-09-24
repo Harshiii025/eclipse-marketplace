@@ -214,25 +214,3 @@
         gap: var(--space-lg);
     }
 }
-.product-card > a {
-    display: block;
-}
-
-.product-card > a:hover {
-    color: inherit;
-}
-.product-card-content {
-    padding: 12px;
-}
-
-.product-card-name {
-    font-size: 14px;
-}
-
-.product-card-price {
-    margin-top: 4px;
-    font-size: 14px;
-}
-.product-card-media {
-    aspect-ratio: 1 / 1.15;
-}

@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/../../app/Helpers/Auth.php';
+
+$user = Auth::user();
+
 $cartItemCount = 0;
 
 if (isset($_SESSION['cart'])) {
@@ -48,9 +52,30 @@ if (isset($_SESSION['cart'])) {
         <!-- Actions -->
         <div class="navbar-actions">
 
-            <a href="login.php">
-                Account
-            </a>
+            <?php if ($user): ?>
+
+                <!-- Logged-in user -->
+                <a href="account.php">
+                    Account
+                </a>
+
+                <a href="logout.php">
+                    Logout
+                </a>
+
+            <?php else: ?>
+
+                <!-- Guest user -->
+                <a href="login.php">
+                    Login
+                </a>
+
+                <a href="register.php">
+                    Register
+                </a>
+
+            <?php endif; ?>
+
 
             <a href="cart.php">
                 Cart <span class="cart-count"><?= $cartItemCount; ?></span>
