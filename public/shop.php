@@ -1,5 +1,13 @@
 <?php
+
 session_start();
+
+require_once __DIR__ . '/../app/Controllers/ProductController.php';
+
+$controller = new ProductController();
+
+$products = $controller->index();
+
 $pageTitle = "Shop | Eclipse";
 
 ?>
@@ -16,7 +24,7 @@ $pageTitle = "Shop | Eclipse";
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title><?= $pageTitle; ?></title>
+    <title><?= htmlspecialchars($pageTitle); ?></title>
 
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/reset.css">
@@ -82,39 +90,44 @@ $pageTitle = "Shop | Eclipse";
                 </h3>
 
                 <a
-                    href="#"
-                    class="active"
-                >
-                    All
-                </a>
+    href="#"
+    class="shop-category active"
+    data-category="all"
+>
+    All
+</a>
 
-                <a href="#">
-                    Men
-                </a>
+<a
+    href="#"
+    class="shop-category"
+    data-category="t-shirts"
+>
+    T-Shirts
+</a>
 
-                <a href="#">
-                    Women
-                </a>
+<a
+    href="#"
+    class="shop-category"
+    data-category="bottomwear"
+>
+    Bottomwear
+</a>
 
-                <a href="#">
-                    T-Shirts
-                </a>
+<a
+    href="#"
+    class="shop-category"
+    data-category="hoodies"
+>
+    Hoodies
+</a>
 
-                <a href="#">
-                    Shirts
-                </a>
-
-                <a href="#">
-                    Hoodies
-                </a>
-
-                <a href="#">
-                    Pants
-                </a>
-
-                <a href="#">
-                    Jackets
-                </a>
+<a
+    href="#"
+    class="shop-category"
+    data-category="sweatshirts"
+>
+    Sweatshirts
+</a>
 
             </div>
 
@@ -134,8 +147,9 @@ $pageTitle = "Shop | Eclipse";
             <div class="shop-products-header">
 
                 <p id="product-count">
-                    6 Products
+                    <?= count($products); ?> Products
                 </p>
+
 
                 <select id="sort-products">
 
@@ -171,448 +185,113 @@ $pageTitle = "Shop | Eclipse";
             >
 
 
+                <?php foreach ($products as $product): ?>
 
-                <!-- =================================
-                     PRODUCT 1
-                ================================== -->
 
-                <article
-                    class="product-card"
-                    data-category="t-shirts"
-                >
-
-                    <a
-                        href="product.php?id=1"
-                        class="product-image-link"
+                    <article
+                        class="product-card"
+                        data-category="<?= htmlspecialchars(
+                            strtolower($product['category'] ?? '')
+                        ); ?>"
                     >
 
-                        <div class="product-image">
 
-                            <div class="product-image-placeholder">
-                                IMAGE
+                        <!-- PRODUCT IMAGE -->
+
+                        <a
+                            href="product.php?id=<?= (int) $product['id']; ?>"
+                            class="product-image-link"
+                        >
+
+                            <div class="product-image">
+
+
+                                <?php if (!empty($product['image'])): ?>
+
+                                    <img
+                                        src="<?= htmlspecialchars($product['image']); ?>"
+                                        alt="<?= htmlspecialchars($product['name']); ?>"
+                                    >
+
+                                <?php else: ?>
+
+                                    <div class="product-image-placeholder">
+                                        IMAGE
+                                    </div>
+
+                                <?php endif; ?>
+
+
                             </div>
 
-                            <span class="product-badge">
-                                NEW
+                        </a>
+
+
+
+                        <!-- PRODUCT INFORMATION -->
+
+                        <div class="product-info">
+
+
+                            <h3>
+
+                                <a
+                                    href="product.php?id=<?= (int) $product['id']; ?>"
+                                >
+                                    <?= htmlspecialchars($product['name']); ?>
+                                </a>
+
+                            </h3>
+
+
+                            <p>
+                                <?= htmlspecialchars(
+                                    $product['category'] ?? ''
+                                ); ?>
+                            </p>
+
+
+                            <span class="product-price">
+
+                                ₹<?= number_format(
+                                    (float) $product['price']
+                                ); ?>
+
                             </span>
 
-                        </div>
-
-                    </a>
 
 
-                    <div class="product-info">
+                            <!-- ADD TO CART -->
 
-                        <h3>
-
-                            <a href="product.php?id=1">
-                                Essential Oversized Tee
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            Heavyweight Cotton
-                        </p>
-
-                        <span class="product-price">
-                            ₹1,499
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="1"
+                            <form
+                                action="add-to-cart.php"
+                                method="POST"
                             >
 
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
+                                <input
+                                    type="hidden"
+                                    name="product_id"
+                                    value="<?= (int) $product['id']; ?>"
+                                >
 
 
+                                <button
+                                    type="submit"
+                                    class="add-to-cart-btn"
+                                >
+                                    Add to Cart
+                                </button>
 
-                <!-- =================================
-                     PRODUCT 2
-                ================================== -->
+                            </form>
 
-                <article
-                    class="product-card"
-                    data-category="shirts"
-                >
-
-                    <a
-                        href="product.php?id=2"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image">
-
-                            <div class="product-image-placeholder">
-                                IMAGE
-                            </div>
-
-                            <span class="product-badge">
-                                BESTSELLER
-                            </span>
 
                         </div>
 
-                    </a>
 
+                    </article>
 
-                    <div class="product-info">
 
-                        <h3>
-
-                            <a href="product.php?id=2">
-                                Classic Relaxed Shirt
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            Premium Cotton
-                        </p>
-
-                        <span class="product-price">
-                            ₹1,999
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="2"
-                            >
-
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================
-                     PRODUCT 3
-                ================================== -->
-
-                <article
-                    class="product-card"
-                    data-category="hoodies"
-                >
-
-                    <a
-                        href="product.php?id=3"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image">
-
-                            <div class="product-image-placeholder">
-                                IMAGE
-                            </div>
-
-                        </div>
-
-                    </a>
-
-
-                    <div class="product-info">
-
-                        <h3>
-
-                            <a href="product.php?id=3">
-                                Minimal Zip Hoodie
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            French Terry
-                        </p>
-
-                        <span class="product-price">
-                            ₹2,499
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="3"
-                            >
-
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================
-                     PRODUCT 4
-                ================================== -->
-
-                <article
-                    class="product-card"
-                    data-category="pants"
-                >
-
-                    <a
-                        href="product.php?id=4"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image">
-
-                            <div class="product-image-placeholder">
-                                IMAGE
-                            </div>
-
-                        </div>
-
-                    </a>
-
-
-                    <div class="product-info">
-
-                        <h3>
-
-                            <a href="product.php?id=4">
-                                Wide Leg Trousers
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            Structured Cotton
-                        </p>
-
-                        <span class="product-price">
-                            ₹2,199
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="4"
-                            >
-
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================
-                     PRODUCT 5
-                ================================== -->
-
-                <article
-                    class="product-card"
-                    data-category="shirts"
-                >
-
-                    <a
-                        href="product.php?id=5"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image">
-
-                            <div class="product-image-placeholder">
-                                IMAGE
-                            </div>
-
-                            <span class="product-badge">
-                                NEW
-                            </span>
-
-                        </div>
-
-                    </a>
-
-
-                    <div class="product-info">
-
-                        <h3>
-
-                            <a href="product.php?id=5">
-                                Oversized Oxford
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            Organic Cotton
-                        </p>
-
-                        <span class="product-price">
-                            ₹1,899
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="5"
-                            >
-
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================
-                     PRODUCT 6
-                ================================== -->
-
-                <article
-                    class="product-card"
-                    data-category="pants"
-                >
-
-                    <a
-                        href="product.php?id=6"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image">
-
-                            <div class="product-image-placeholder">
-                                IMAGE
-                            </div>
-
-                        </div>
-
-                    </a>
-
-
-                    <div class="product-info">
-
-                        <h3>
-
-                            <a href="product.php?id=6">
-                                Everyday Cargo
-                            </a>
-
-                        </h3>
-
-                        <p>
-                            Utility Cotton
-                        </p>
-
-                        <span class="product-price">
-                            ₹2,299
-                        </span>
-
-
-                        <!-- ADD TO CART -->
-
-                        <form
-                            action="add-to-cart.php"
-                            method="POST"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="product_id"
-                                value="6"
-                            >
-
-                            <button
-                                type="submit"
-                                class="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </article>
+                <?php endforeach; ?>
 
 
             </div>
@@ -622,6 +301,7 @@ $pageTitle = "Shop | Eclipse";
     </section>
 
 </main>
+
 
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

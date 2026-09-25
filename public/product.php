@@ -1,82 +1,23 @@
 <?php
+
 session_start();
 
-$products = [
-    1 => [
-        'name' => 'Essential Oversized Tee',
-        'category' => 'MEN / T-SHIRTS',
-        'price' => 1499,
-        'description' => 'A clean oversized essential designed for everyday comfort and effortless style.',
-        'material' => 'Heavyweight Cotton',
-        'fit' => 'Oversized',
-        'collection' => 'Core Essentials'
-    ],
+require_once __DIR__ . '/../app/Controllers/ProductController.php';
 
-    2 => [
-        'name' => 'Classic Relaxed Shirt',
-        'category' => 'MEN / SHIRTS',
-        'price' => 1999,
-        'description' => 'A relaxed premium cotton shirt built for a clean everyday wardrobe.',
-        'material' => 'Premium Cotton',
-        'fit' => 'Relaxed',
-        'collection' => 'Core Essentials'
-    ],
-
-    3 => [
-        'name' => 'Minimal Zip Hoodie',
-        'category' => 'MEN / HOODIES',
-        'price' => 2499,
-        'description' => 'A minimal French Terry hoodie with a comfortable relaxed silhouette.',
-        'material' => 'French Terry',
-        'fit' => 'Relaxed',
-        'collection' => 'Eclipse Essentials'
-    ],
-
-    4 => [
-        'name' => 'Wide Leg Trousers',
-        'category' => 'MEN / PANTS',
-        'price' => 2199,
-        'description' => 'Structured wide-leg trousers designed for a modern relaxed silhouette.',
-        'material' => 'Structured Cotton',
-        'fit' => 'Wide Leg',
-        'collection' => 'Eclipse Essentials'
-    ],
-
-    5 => [
-        'name' => 'Oversized Oxford',
-        'category' => 'MEN / SHIRTS',
-        'price' => 1899,
-        'description' => 'A modern oversized Oxford shirt made for effortless everyday layering.',
-        'material' => 'Organic Cotton',
-        'fit' => 'Oversized',
-        'collection' => 'New Arrivals'
-    ],
-
-    6 => [
-        'name' => 'Everyday Cargo',
-        'category' => 'MEN / PANTS',
-        'price' => 2299,
-        'description' => 'A practical utility-inspired cargo with a clean contemporary finish.',
-        'material' => 'Utility Cotton',
-        'fit' => 'Relaxed',
-        'collection' => 'Eclipse Essentials'
-    ]
-];
-
+$controller = new ProductController();
 
 $productId = isset($_GET['id'])
     ? (int) $_GET['id']
     : 1;
 
+$product = $controller->show($productId);
 
-if (!isset($products[$productId])) {
-    $productId = 1;
+if (!$product) {
+    http_response_code(404);
+    exit('Product not found.');
 }
 
-
-$product = $products[$productId];
-
-$pageTitle = $product['name'] . " | Eclipse";
+$pageTitle = $product['name'] . ' | Eclipse';
 
 ?>
 
@@ -117,11 +58,12 @@ $pageTitle = $product['name'] . " | Eclipse";
 
         <div class="product-main-image">
 
-            <span>
-                IMAGE
-            </span>
+    <img
+        src="<?= htmlspecialchars($product['image']); ?>"
+        alt="<?= htmlspecialchars($product['name']); ?>"
+    >
 
-        </div>
+</div>
 
 
         <!-- =====================================================
@@ -147,7 +89,7 @@ $pageTitle = $product['name'] . " | Eclipse";
 
             <p class="product-detail-price">
 
-                ₹<?= number_format($product['price']); ?>
+                ₹<?= number_format((float) $product['price']); ?>
 
             </p>
 
@@ -248,16 +190,16 @@ $pageTitle = $product['name'] . " | Eclipse";
                  ================================================= -->
 
             <button
-    type="button"
-    class="product-add-to-cart"
-    id="product-add-to-cart"
-    data-product-id="<?= $productId; ?>"
-    data-product-name="<?= htmlspecialchars($product['name']); ?>"
-    data-product-category="<?= htmlspecialchars($product['category']); ?>"
-    data-product-price="<?= $product['price']; ?>"
->
-    Add to Cart
-</button>
+                type="button"
+                class="product-add-to-cart"
+                id="product-add-to-cart"
+                data-product-id="<?= (int) $product['id']; ?>"
+                data-product-name="<?= htmlspecialchars($product['name']); ?>"
+                data-product-category="<?= htmlspecialchars($product['category']); ?>"
+                data-product-price="<?= (float) $product['price']; ?>"
+            >
+                Add to Cart
+            </button>
 
 
             <!-- =================================================
@@ -274,7 +216,7 @@ $pageTitle = $product['name'] . " | Eclipse";
                     </span>
 
                     <span>
-                        <?= htmlspecialchars($product['material']); ?>
+                        —
                     </span>
 
                 </div>
@@ -287,7 +229,7 @@ $pageTitle = $product['name'] . " | Eclipse";
                     </span>
 
                     <span>
-                        <?= htmlspecialchars($product['fit']); ?>
+                        —
                     </span>
 
                 </div>
@@ -300,7 +242,7 @@ $pageTitle = $product['name'] . " | Eclipse";
                     </span>
 
                     <span>
-                        <?= htmlspecialchars($product['collection']); ?>
+                        —
                     </span>
 
                 </div>

@@ -1,77 +1,49 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const productGrid = document.getElementById("product-grid");
-    const categoryButtons = document.querySelectorAll(".shop-category");
-    const sortSelect = document.getElementById("sort-products");
-    const productCount = document.getElementById("product-count");
+    const productGrid =
+        document.getElementById("product-grid");
+
+    const categoryButtons =
+        document.querySelectorAll(".shop-category");
+
+    const sortSelect =
+        document.getElementById("sort-products");
+
+    const productCount =
+        document.getElementById("product-count");
 
 
     /*
     |--------------------------------------------------------------------------
-    | Product Data
+    | Products are now loaded by PHP from MySQL.
     |--------------------------------------------------------------------------
+    |
+    | PHP creates the product cards.
+    | JavaScript only handles:
+    |
+    | - Category filtering
+    | - Sorting
+    | - Product count
+    |
     */
-
-    const products = [
-
-        {
-            id: 1,
-            name: "Essential Oversized Tee",
-            description: "Heavyweight Cotton",
-            price: 1499,
-            category: "t-shirts",
-            badge: "NEW"
-        },
-
-        {
-            id: 2,
-            name: "Classic Relaxed Shirt",
-            description: "Premium Cotton",
-            price: 1999,
-            category: "shirts",
-            badge: "BESTSELLER"
-        },
-
-        {
-            id: 3,
-            name: "Minimal Zip Hoodie",
-            description: "French Terry",
-            price: 2499,
-            category: "hoodies",
-            badge: ""
-        },
-
-        {
-            id: 4,
-            name: "Wide Leg Trousers",
-            description: "Structured Cotton",
-            price: 2199,
-            category: "pants",
-            badge: ""
-        },
-
-        {
-            id: 5,
-            name: "Oversized Oxford",
-            description: "Organic Cotton",
-            price: 1899,
-            category: "shirts",
-            badge: "NEW"
-        },
-
-        {
-            id: 6,
-            name: "Everyday Cargo",
-            description: "Utility Cotton",
-            price: 2299,
-            category: "pants",
-            badge: ""
-        }
-
-    ];
 
 
     let activeCategory = "all";
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Get Product Cards
+    |--------------------------------------------------------------------------
+    */
+
+    function getProductCards() {
+
+        return Array.from(
+            productGrid.querySelectorAll(".product-card")
+        );
+
+    }
 
 
     /*
@@ -82,18 +54,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function displayProducts() {
 
-        let filteredProducts = [...products];
+        let cards = getProductCards();
 
 
         /*
+        |--------------------------------------------------------------------------
         | Category Filter
+        |--------------------------------------------------------------------------
         */
 
         if (activeCategory !== "all") {
 
-            filteredProducts = filteredProducts.filter(product => {
+            cards.forEach(card => {
 
-                return product.category === activeCategory;
+                const category =
+                    card.dataset.category;
+
+                if (category === activeCategory) {
+
+                    card.style.display = "";
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+        } else {
+
+            cards.forEach(card => {
+
+                card.style.display = "";
 
             });
 
@@ -101,27 +94,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
+        |--------------------------------------------------------------------------
         | Sort Products
+        |--------------------------------------------------------------------------
         */
 
         if (sortSelect) {
 
-            const sortValue = sortSelect.value;
+            const sortValue =
+                sortSelect.value;
 
 
-            if (sortValue === "price-low") {
+            if (
+                sortValue === "price-low" ||
+                sortValue === "price-high"
+            ) {
 
-                filteredProducts.sort((a, b) => {
-                    return a.price - b.price;
+                cards.sort((a, b) => {
+
+                    const priceA =
+                        parseFloat(
+                            a.querySelector(".product-price")
+                                ?.textContent
+                                .replace(/[^\d.]/g, "")
+                        ) || 0;
+
+                    const priceB =
+                        parseFloat(
+                            b.querySelector(".product-price")
+                                ?.textContent
+                                .replace(/[^\d.]/g, "")
+                        ) || 0;
+
+
+                    if (sortValue === "price-low") {
+
+                        return priceA - priceB;
+
+                    }
+
+                    return priceB - priceA;
+
                 });
 
-            }
 
+                cards.forEach(card => {
 
-            if (sortValue === "price-high") {
+                    productGrid.appendChild(card);
 
-                filteredProducts.sort((a, b) => {
-                    return b.price - a.price;
                 });
 
             }
@@ -130,264 +150,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
+        |--------------------------------------------------------------------------
         | Product Count
+        |--------------------------------------------------------------------------
         */
+
+        const visibleCards =
+            cards.filter(card => {
+
+                return card.style.display !== "none";
+
+            });
+
 
         if (productCount) {
 
             productCount.textContent =
-                `${filteredProducts.length} Products`;
-
-        }
-
-
-        /*
-        | Clear Grid
-        */
-
-        productGrid.innerHTML = "";
-
-
-        /*
-        | No Products
-        */
-
-        if (filteredProducts.length === 0) {
-
-            productGrid.innerHTML = `
-                <div class="no-products">
-                    No products found.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        /*
-        | Create Product Cards
-        */
-
-        filteredProducts.forEach(product => {
-
-            const card = document.createElement("article");
-
-            card.className = "product-card";
-
-
-            card.innerHTML = `
-
-                <div class="product-image">
-
-                    ${
-                        product.badge
-                            ? `
-                                <span class="product-badge">
-                                    ${product.badge}
-                                </span>
-                              `
-                            : ""
-                    }
-
-
-                    <a
-                        href="product.php?id=${product.id}"
-                        class="product-image-link"
-                    >
-
-                        <div class="product-image-placeholder">
-                            <span>IMAGE</span>
-                        </div>
-
-                    </a>
-
-                </div>
-
-
-                <div class="product-info">
-
-                    <p class="product-category">
-                        ${product.category
-                            .replace("-", " ")
-                            .toUpperCase()}
-                    </p>
-
-
-                    <h3>
-
-                        <a href="product.php?id=${product.id}">
-                            ${product.name}
-                        </a>
-
-                    </h3>
-
-
-                    <p>
-                        ${product.description}
-                    </p>
-
-
-                    <p class="product-price">
-                        ₹${product.price.toLocaleString("en-IN")}
-                    </p>
-
-
-                    <form class="shop-add-to-cart-form">
-
-                        <button
-                            type="button"
-                            class="add-to-cart-btn"
-                            data-product-id="${product.id}"
-                        >
-                            Add to Cart
-                        </button>
-
-                    </form>
-
-                </div>
-
-            `;
-
-
-            productGrid.appendChild(card);
-
-        });
-
-
-        /*
-        | Attach Add To Cart Events
-        */
-
-        const addButtons =
-            document.querySelectorAll(".add-to-cart-btn");
-
-
-        addButtons.forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                addToCart(button);
-
-            });
-
-        });
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Add To Cart
-    |--------------------------------------------------------------------------
-    */
-
-    async function addToCart(button) {
-
-        const productId =
-            button.dataset.productId;
-
-
-        const formData = new FormData();
-
-        formData.append("product_id", productId);
-
-        formData.append("quantity", 1);
-
-        formData.append("size", "M");
-
-
-        try {
-
-            button.disabled = true;
-
-            button.textContent = "Adding...";
-
-
-            const response = await fetch(
-                "add-to-cart.php",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-
-            /*
-            | add-to-cart.php redirects to cart.php.
-            | fetch follows that redirect automatically.
-            */
-
-            if (response.ok) {
-
-                button.textContent = "Added ✓";
-
-
-                /*
-                | Update Navbar Cart Count
-                */
-
-                const cartCount =
-                    document.querySelector(".cart-count");
-
-
-                if (cartCount) {
-
-                    const currentCount =
-                        parseInt(
-                            cartCount.textContent
-                        ) || 0;
-
-
-                    cartCount.textContent =
-                        currentCount + 1;
-
-                }
-
-
-                /*
-                | Reset Button
-                */
-
-                setTimeout(() => {
-
-                    button.textContent =
-                        "Add to Cart";
-
-                    button.disabled = false;
-
-                }, 1500);
-
-            } else {
-
-                button.textContent =
-                    "Add to Cart";
-
-                button.disabled = false;
-
-                alert(
-                    "Unable to add product to cart."
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Add to cart error:",
-                error
-            );
-
-
-            button.textContent =
-                "Add to Cart";
-
-            button.disabled = false;
-
-
-            alert(
-                "Something went wrong."
-            );
+                `${visibleCards.length} Products`;
 
         }
 
@@ -402,7 +181,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     categoryButtons.forEach(button => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener("click", event => {
+
+            event.preventDefault();
+
 
             categoryButtons.forEach(btn => {
 
@@ -415,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             activeCategory =
-                button.dataset.category;
+                button.dataset.category || "all";
 
 
             displayProducts();

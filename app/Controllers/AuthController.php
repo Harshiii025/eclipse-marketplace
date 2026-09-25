@@ -13,10 +13,10 @@ class AuthController
     }
 
     public function register(): void
-{
-    Auth::startSession();
+    {
+        Auth::startSession();
 
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
             exit('Method Not Allowed');
         }
@@ -32,11 +32,11 @@ class AuthController
             exit;
 
         } catch (Exception $e) {
-    $_SESSION['auth_error'] = $e->getMessage();
+            $_SESSION['auth_error'] = $e->getMessage();
 
-    header('Location: /register.php');
-    exit;
-}
+            header('Location: /register.php');
+            exit;
+        }
     }
 
     public function login(): void
@@ -56,26 +56,36 @@ class AuthController
             exit('Invalid email or password.');
         }
 
-       Auth::startSession();
+        Auth::startSession();
 
-session_regenerate_id(true);
+        session_regenerate_id(true);
 
-$_SESSION['user'] = [
+        $_SESSION['user'] = [
             'id' => $user['id'],
             'name' => $user['name'],
             'email' => $user['email'],
             'role' => $user['role']
         ];
 
+        if ($user['role'] === 'admin') {
+            header('Location: /admin/');
+            exit;
+        }
+
+        if ($user['role'] === 'seller') {
+            header('Location: /seller/');
+            exit;
+        }
+
         header('Location: /');
         exit;
     }
 
-   public function logout(): void
-{
-    Auth::logout();
+    public function logout(): void
+    {
+        Auth::logout();
 
-    header('Location: /');
-    exit;
-}
+        header('Location: /');
+        exit;
+    }
 }
